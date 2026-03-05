@@ -169,9 +169,58 @@ function SearchBox({ onNavigate }) {
   );
 }
 
+// ─── ProfileMenu component ───────────────────────────────────────────────────
+function ProfileMenu({ avatarLetter, email, onLogout }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  // Close when clicking outside
+  useEffect(() => {
+    const handler = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setOpen((p) => !p)}
+        className="flex h-8 w-8 items-center justify-center rounded-full bg-[#9333ea] text-white text-sm font-semibold select-none hover:bg-[#7e22ce] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(168,85,247,0.5)]"
+        aria-label={`Account menu for ${email}`}
+        aria-haspopup="true"
+        aria-expanded={open}
+      >
+        {avatarLetter}
+      </button>
+
+      {open && (
+        <div className="absolute right-0 top-full mt-2 w-56 rounded-xl border border-[rgba(168,85,247,0.15)] bg-white shadow-[0_8px_32px_rgba(147,51,234,0.14)] overflow-hidden z-50">
+          {/* Email header */}
+          <div className="flex items-center gap-3 px-4 py-3 border-b border-[rgba(168,85,247,0.1)]">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#9333ea] text-white text-sm font-semibold select-none">
+              {avatarLetter}
+            </div>
+            <p className="text-sm text-zinc-600 truncate">{email}</p>
+          </div>
+          {/* Sign out */}
+          <button
+            onClick={() => { setOpen(false); onLogout(); }}
+            className="flex w-full items-center gap-2.5 px-4 py-2.5 text-sm font-medium text-[#7e22ce] hover:bg-[rgba(168,85,247,0.06)] transition-colors"
+          >
+            <LogOut size={15} />
+            Sign out
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /**
  * Navbar — Proctora branding left, search center, auth actions right.
- * Shows Log in / Sign up when logged out; user email + Sign out when logged in.
+ * Shows Log in / Sign up when logged out; avatar with dropdown when logged in.
  * Collapses to a hamburger menu on md and below.
  */
 export default function Navbar({ className }) {
@@ -222,32 +271,16 @@ export default function Navbar({ className }) {
           <SearchBox onNavigate={() => setMenuOpen(false)} />
         </div>
 
-        {/* Right — auth buttons (hidden on mobile), skeleton while loading */}
+        {/* Right — auth area (hidden on mobile), skeleton while loading */}
         <div className="hidden items-center gap-2 md:flex">
           {loading ? (
-            // Thin placeholder to prevent layout shift
-            <div className="h-9 w-32 rounded-md bg-[rgba(168,85,247,0.08)] animate-pulse" />
+            <div className="h-8 w-8 rounded-full bg-[rgba(168,85,247,0.08)] animate-pulse" />
           ) : user ? (
-            <>
-              {avatarLetter && (
-                <div
-                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#9333ea] text-white text-sm font-semibold select-none"
-                  aria-label={`Signed in as ${user.email}`}
-                  title={user.email}
-                >
-                  {avatarLetter}
-                </div>
-              )}
-              <Button
-                variant="ghost"
-                onClick={handleLogout}
-                className="font-medium text-[#7e22ce] hover:bg-[rgba(168,85,247,0.08)] hover:text-[#7e22ce] gap-1.5"
-                aria-label="Sign out"
-              >
-                <LogOut size={15} />
-                Sign out
-              </Button>
-            </>
+            <ProfileMenu
+              avatarLetter={avatarLetter}
+              email={user.email}
+              onLogout={handleLogout}
+            />
           ) : (
             <>
               <Button
@@ -295,19 +328,15 @@ export default function Navbar({ className }) {
               <div className="h-11 rounded-md bg-[rgba(168,85,247,0.08)] animate-pulse" />
             ) : user ? (
               <>
-                {avatarLetter && (
-                  <div className="flex items-center justify-center gap-2 py-1">
-                    <div
-                      className="flex h-9 w-9 items-center justify-center rounded-full bg-[#9333ea] text-white text-sm font-semibold select-none"
-                      aria-hidden="true"
-                    >
-                      {avatarLetter}
-                    </div>
-                    {user.email && (
-                      <span className="text-sm text-zinc-400 truncate max-w-48">{user.email}</span>
-                    )}
+                {/* Email + avatar row */}
+                <div className="flex items-center gap-3 px-1 py-2 border-b border-[rgba(168,85,247,0.1)] mb-1">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#9333ea] text-white text-sm font-semibold select-none">
+                    {avatarLetter}
                   </div>
-                )}
+                  {user.email && (
+                    <span className="text-sm text-zinc-500 truncate">{user.email}</span>
+                  )}
+                </div>
                 <Button
                   variant="ghost"
                   onClick={handleLogout}
