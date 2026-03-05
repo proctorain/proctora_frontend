@@ -185,10 +185,10 @@ export default function Navbar({ className }) {
     router.push("/");
   };
 
-  // Derive display name — use email prefix or "Account" as fallback
-  const displayName =
+  // First letter of the email for the avatar
+  const avatarLetter =
     user && typeof user === "object" && user.email
-      ? user.email.split("@")[0]
+      ? user.email[0].toUpperCase()
       : null;
 
   return (
@@ -229,10 +229,14 @@ export default function Navbar({ className }) {
             <div className="h-9 w-32 rounded-md bg-[rgba(168,85,247,0.08)] animate-pulse" />
           ) : user ? (
             <>
-              {displayName && (
-                <span className="text-sm text-zinc-500 max-w-35 truncate hidden lg:block">
-                  {displayName}
-                </span>
+              {avatarLetter && (
+                <div
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#9333ea] text-white text-sm font-semibold select-none"
+                  aria-label={`Signed in as ${user.email}`}
+                  title={user.email}
+                >
+                  {avatarLetter}
+                </div>
               )}
               <Button
                 variant="ghost"
@@ -291,10 +295,18 @@ export default function Navbar({ className }) {
               <div className="h-11 rounded-md bg-[rgba(168,85,247,0.08)] animate-pulse" />
             ) : user ? (
               <>
-                {displayName && (
-                  <p className="text-center text-sm text-zinc-400 py-1">
-                    {displayName}
-                  </p>
+                {avatarLetter && (
+                  <div className="flex items-center justify-center gap-2 py-1">
+                    <div
+                      className="flex h-9 w-9 items-center justify-center rounded-full bg-[#9333ea] text-white text-sm font-semibold select-none"
+                      aria-hidden="true"
+                    >
+                      {avatarLetter}
+                    </div>
+                    {user.email && (
+                      <span className="text-sm text-zinc-400 truncate max-w-48">{user.email}</span>
+                    )}
+                  </div>
                 )}
                 <Button
                   variant="ghost"
