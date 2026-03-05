@@ -208,3 +208,65 @@
   75%  { transform: translate(40px, 20px) scale(1.02); }
   100% { transform: translate(0px, 0px) scale(1); }
 }
+
+/* ── Auth right panel — faster bubbles on deep-purple background ── */
+.auth-panel {
+  position: relative;
+  overflow: hidden;
+  background-color: #1e0336;
+  width: 100%;
+  height: 100%;
+}
+
+.bubble-r {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(50px);
+  animation: drift linear infinite;
+}
+
+.bubble-r-1 {
+  width: 420px;
+  height: 420px;
+  background-color: rgba(167, 139, 250, 0.22);
+  top: -100px;
+  left: -80px;
+  animation-duration: 7s;
+}
+.bubble-r-2 {
+  width: 320px;
+  height: 320px;
+  background-color: rgba(196, 181, 253, 0.16);
+  bottom: 8%;
+  right: -60px;
+  animation-duration: 9s;
+  animation-direction: reverse;
+}
+.bubble-r-3 {
+  width: 260px;
+  height: 260px;
+  background-color: rgba(109, 40, 217, 0.50);
+  top: 42%;
+  left: 18%;
+  animation-duration: 6s;
+  animation-delay: -3s;
+}
+.bubble-r-4 {
+  width: 190px;
+  height: 190px;
+  background-color: rgba(221, 214, 254, 0.13);
+  top: 12%;
+  right: 12%;
+  animation-duration: 8s;
+  animation-delay: -5s;
+}
+.bubble-r-5 {
+  width: 210px;
+  height: 210px;
+  background-color: rgba(139, 92, 246, 0.32);
+  bottom: 3%;
+  left: 8%;
+  animation-duration: 5s;
+  animation-direction: reverse;
+  animation-delay: -2s;
+}
