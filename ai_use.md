@@ -1,0 +1,1 @@
+Use claude.md before editing anything using the ai, use claude sonnet explicitely using the claude.md
