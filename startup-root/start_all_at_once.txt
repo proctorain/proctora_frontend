@@ -1,1 +1,2 @@
-powershell -ExecutionPolicy Bypass -File dev.ps1
+1. paste this dev.ps1 in the root where frontend/ , backend/ is located and run the below command
+2. powershell -ExecutionPolicy Bypass -File dev.ps1
