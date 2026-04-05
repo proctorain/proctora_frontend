@@ -1,5 +1,7 @@
 import axiosInstance from "@/config/axios";
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
 export const registerUser = async ({ email, password, confirmPassword }) => {
   const response = await axiosInstance.post("/api/auth/register", {
     email,
@@ -34,11 +36,35 @@ export const forgotPassword = async ({ email }) => {
   return response.data;
 };
 
+export const verifyEmailOtp = async ({ email, otp }) => {
+  const response = await axiosInstance.post("/api/auth/verify-otp", {
+    email,
+    otp,
+  });
+  return response.data;
+};
+
+export const resendOtp = async ({ email, type = "verification" }) => {
+  const response = await axiosInstance.post("/api/auth/resend-otp", {
+    email,
+    type,
+  });
+  return response.data;
+};
+
+export const verifyResetOtp = async ({ email, otp }) => {
+  const response = await axiosInstance.post("/api/auth/verify-reset-otp", {
+    email,
+    otp,
+  });
+  return response.data;
+};
+
 export const resetPassword = async ({ token, password }) => {
-  const response = await axiosInstance.post(
-    `/api/auth/reset-password?token=${encodeURIComponent(token)}`,
-    { password },
-  );
+  const response = await axiosInstance.post("/api/auth/reset-password", {
+    token,
+    password,
+  });
   return response.data;
 };
 
@@ -48,3 +74,6 @@ export const refreshAccessToken = async ({ refreshToken }) => {
   });
   return response.data;
 };
+
+export const getGoogleAuthUrl = () =>
+  API_BASE_URL ? `${API_BASE_URL}/api/auth/google` : "";
