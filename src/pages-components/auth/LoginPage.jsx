@@ -47,7 +47,7 @@ export default function LoginPage() {
       const res = await loginUser(values);
       const { accessToken, refreshToken, requiresOnboarding } = res.data;
       await login(accessToken, refreshToken);
-      router.push(requiresOnboarding ? "/on-boarding" : "/");
+      router.push(requiresOnboarding ? "/on-boarding" : "/dashboard");
     } catch (err) {
       const data = err?.response?.data;
 

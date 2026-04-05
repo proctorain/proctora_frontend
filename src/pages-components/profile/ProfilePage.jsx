@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Camera, Loader2, Save, Trash2, UserRound } from "lucide-react";
 
 import Navbar from "@/components/common/Navbar";
+import LeftSidebar from "@/components/common/LeftSidebar";
 import AnimatedBackground from "@/components/custom/AnimatedBackground";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -217,19 +218,22 @@ export default function ProfilePage() {
 
       <div className="relative z-10">
         <Navbar />
+        <div className="flex min-h-[calc(100vh-4rem)]">
+          <LeftSidebar />
 
-        <main className="mx-auto w-full max-w-5xl px-4 pb-16 pt-20 sm:px-6 lg:px-8">
-          <div className="mb-8 text-center">
-            <p className="text-xs uppercase tracking-[0.22em] text-[#9333ea]">Profile</p>
-            <h1 className="mt-4 text-3xl font-bold tracking-tight text-zinc-900 sm:text-5xl">
-              Manage your <span className="text-[#9333ea]">Proctora</span> profile
-            </h1>
-            <p className="mt-4 text-zinc-500">
-              Update your display name and avatar used across the platform.
-            </p>
-          </div>
+          <main className="flex-1 px-4 py-14 sm:px-6 lg:px-8">
+            <div className="mx-auto w-full max-w-5xl">
+              <div className="mb-8 text-center">
+                <p className="text-xs uppercase tracking-[0.22em] text-[#9333ea]">Profile</p>
+                <h1 className="mt-4 text-3xl font-bold tracking-tight text-zinc-900 sm:text-5xl">
+                  Manage your <span className="text-[#9333ea]">Proctora</span> profile
+                </h1>
+                <p className="mt-4 text-zinc-500">
+                  Update your display name and avatar used across the platform.
+                </p>
+              </div>
 
-          <section className="rounded-3xl border border-[rgba(168,85,247,0.22)] bg-white/90 p-6 shadow-[0_18px_40px_rgba(147,51,234,0.12)] backdrop-blur sm:p-8">
+              <section className="rounded-3xl border border-[rgba(168,85,247,0.22)] bg-white/90 p-6 shadow-[0_18px_40px_rgba(147,51,234,0.12)] backdrop-blur sm:p-8">
             {isBootstrapping ? (
               <div className="flex min-h-56 items-center justify-center text-sm text-zinc-500">
                 <Loader2 className="mr-2 animate-spin text-[#9333ea]" size={18} />
@@ -368,8 +372,10 @@ export default function ProfilePage() {
                 )}
               </div>
             )}
-          </section>
-        </main>
+              </section>
+            </div>
+          </main>
+        </div>
       </div>
     </div>
   );

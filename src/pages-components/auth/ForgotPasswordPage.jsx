@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 import { forgotPassword } from "@/api/auth.api";
 import { Button } from "@/components/ui/button";
@@ -16,15 +17,26 @@ const schema = z.object({
 });
 
 export default function ForgotPasswordPage() {
+  const searchParams = useSearchParams();
+  const emailFromQuery = searchParams.get("email") ?? "";
+
   const [serverMsg, setServerMsg] = useState("");
+  const [submittedEmail, setSubmittedEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm({ resolver: zodResolver(schema) });
+
+  useEffect(() => {
+    if (emailFromQuery) {
+      setValue("email", emailFromQuery);
+    }
+  }, [emailFromQuery, setValue]);
 
   const onSubmit = async (values) => {
     setServerMsg("");
@@ -32,9 +44,11 @@ export default function ForgotPasswordPage() {
     try {
       const res = await forgotPassword(values);
       // Backend always returns the same neutral message for security
+      const normalizedEmail = values.email.trim();
+      setSubmittedEmail(normalizedEmail);
       setServerMsg(
         res.message ??
-          "If an account with that email exists, a reset link has been sent.",
+          "If an account with that email exists, a reset OTP has been sent.",
       );
       setSubmitted(true);
     } catch (err) {
@@ -66,6 +80,12 @@ export default function ForgotPasswordPage() {
           <div className="rounded-xl bg-[rgba(168,85,247,0.06)] border border-[rgba(168,85,247,0.2)] px-5 py-6 text-center space-y-3">
             <p className="text-sm text-zinc-700">{serverMsg}</p>
             <Link
+              href={`/reset-password?email=${encodeURIComponent(submittedEmail || emailFromQuery)}&otpSent=1&flow=forgot`}
+              className="inline-block text-sm font-medium text-[#9333ea] hover:text-[#7e22ce] hover:underline"
+            >
+              Continue reset on screen →
+            </Link>
+            <Link
               href="/login"
               className="inline-block text-sm font-medium text-[#9333ea] hover:text-[#7e22ce] hover:underline"
             >
@@ -75,7 +95,7 @@ export default function ForgotPasswordPage() {
         ) : (
           <>
             <p className="mb-5 text-sm text-zinc-500 text-center">
-              Enter your email and we&apos;ll send you a reset link.
+              Enter your email and we&apos;ll send a reset OTP.
             </p>
 
             <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
@@ -113,7 +133,7 @@ export default function ForgotPasswordPage() {
                 disabled={isLoading}
                 className="w-full bg-[#9333ea] text-white hover:bg-[#7e22ce] font-medium shadow-[0_2px_12px_rgba(147,51,234,0.25)] min-h-11 disabled:opacity-60"
               >
-                {isLoading ? "Sending…" : "Send reset link"}
+                {isLoading ? "Sending…" : "Send reset OTP"}
               </Button>
             </form>
 

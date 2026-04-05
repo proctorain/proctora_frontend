@@ -24,7 +24,7 @@ const ALL_PAGES = [
 ];
 
 // ─── SearchBox component ─────────────────────────────────────────────────────
-function SearchBox({ onNavigate }) {
+function SearchBox({ onNavigate, pages = ALL_PAGES }) {
   const [query, setQuery]           = useState("");
   const [open, setOpen]             = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -34,13 +34,13 @@ function SearchBox({ onNavigate }) {
 
   const q = query.trim().toLowerCase();
   const filtered = q
-    ? ALL_PAGES.filter(
+    ? pages.filter(
         (p) =>
           p.label.toLowerCase().includes(q) ||
           p.description.toLowerCase().includes(q) ||
           p.tags.some((t) => t.includes(q)),
       )
-    : ALL_PAGES;
+    : pages;
 
   // Group by category while preserving order
   const groups = filtered.reduce((acc, item) => {
@@ -199,7 +199,15 @@ function ProfileAvatar({ avatarUrl, avatarLetter, className, label }) {
   );
 }
 
-function ProfileMenu({ avatarLetter, avatarUrl, email, onOpenProfile, onLogout }) {
+function ProfileMenu({
+  avatarLetter,
+  avatarUrl,
+  email,
+  showResetPassword,
+  onOpenProfile,
+  onResetPassword,
+  onLogout,
+}) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
@@ -255,6 +263,18 @@ function ProfileMenu({ avatarLetter, avatarUrl, email, onOpenProfile, onLogout }
             <UserRound size={15} />
             Profile
           </button>
+          {showResetPassword && (
+            <button
+              onClick={() => {
+                setOpen(false);
+                onResetPassword();
+              }}
+              className="flex w-full items-center gap-2.5 px-4 py-2.5 text-sm font-medium text-[#7e22ce] hover:bg-[rgba(168,85,247,0.06)] transition-colors"
+            >
+              <Lock size={15} />
+              Reset password
+            </button>
+          )}
           {/* Sign out */}
           <button
             onClick={() => { setOpen(false); onLogout(); }}
@@ -290,6 +310,20 @@ export default function Navbar({ className }) {
     router.push("/profile");
   };
 
+  const handleResetPassword = () => {
+    setMenuOpen(false);
+    const emailQuery =
+      user && typeof user === "object" && user.email
+        ? `?email=${encodeURIComponent(user.email)}`
+        : "";
+    if (emailQuery) {
+      router.push(`/reset-password${emailQuery}&flow=logged-in`);
+      return;
+    }
+
+    router.push("/reset-password?flow=logged-in");
+  };
+
   // First letter of the email for the avatar
   const avatarLetter =
     user && typeof user === "object" && user.email
@@ -300,6 +334,21 @@ export default function Navbar({ className }) {
     user && typeof user === "object"
       ? user?.profile?.avatarUrl || null
       : null;
+
+  const isEmailAuthUser =
+    user && typeof user === "object" && user.authMethod === "email";
+
+  const isGoogleAuthUser =
+    user && typeof user === "object" && user.authMethod === "google";
+
+  const searchPages =
+    user && typeof user === "object"
+      ? ALL_PAGES.filter(
+          (p) =>
+            p.href !== "/forgot-password" &&
+            !(isGoogleAuthUser && p.href === "/reset-password"),
+        )
+      : ALL_PAGES;
 
   return (
     <nav
@@ -329,7 +378,10 @@ export default function Navbar({ className }) {
 
         {/* Center — search (hidden on mobile) */}
         <div className="hidden flex-1 max-w-md md:flex">
-          <SearchBox onNavigate={() => setMenuOpen(false)} />
+          <SearchBox
+            pages={searchPages}
+            onNavigate={() => setMenuOpen(false)}
+          />
         </div>
 
         {/* Right — auth area (hidden on mobile), skeleton while loading */}
@@ -341,7 +393,9 @@ export default function Navbar({ className }) {
               avatarLetter={avatarLetter}
               avatarUrl={avatarUrl}
               email={user.email}
+              showResetPassword={isEmailAuthUser}
               onOpenProfile={handleOpenProfile}
+              onResetPassword={handleResetPassword}
               onLogout={handleLogout}
             />
           ) : (
@@ -382,7 +436,10 @@ export default function Navbar({ className }) {
         >
           {/* Mobile search */}
           <div className="mb-3">
-            <SearchBox onNavigate={() => setMenuOpen(false)} />
+            <SearchBox
+              pages={searchPages}
+              onNavigate={() => setMenuOpen(false)}
+            />
           </div>
 
           {/* Mobile auth */}
@@ -412,6 +469,17 @@ export default function Navbar({ className }) {
                   <UserRound size={15} />
                   Profile
                 </Button>
+                {isEmailAuthUser && (
+                  <Button
+                    variant="ghost"
+                    onClick={handleResetPassword}
+                    className="w-full justify-center font-medium text-[#7e22ce] hover:bg-[rgba(168,85,247,0.08)] hover:text-[#7e22ce] min-h-11 gap-1.5"
+                    aria-label="Reset password"
+                  >
+                    <Lock size={15} />
+                    Reset password
+                  </Button>
+                )}
                 <Button
                   variant="ghost"
                   onClick={handleLogout}
