@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Search, Menu, X, LogOut, Home, LogIn, UserPlus, KeyRound, Lock, LayoutDashboard, FileText, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import LogoAnimation from "@/components/custom/LogoAnimation";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 
@@ -219,7 +220,7 @@ function ProfileMenu({ avatarLetter, email, onLogout }) {
 }
 
 /**
- * Navbar — Proctora branding left, search center, auth actions right.
+ * Navbar — animated Proctora branding left, search center, auth actions right.
  * Shows Log in / Sign up when logged out; avatar with dropdown when logged in.
  * Collapses to a hamburger menu on md and below.
  */
@@ -256,14 +257,14 @@ export default function Navbar({ className }) {
       aria-label="Main navigation"
     >
       {/* Desktop row */}
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+      <div className="flex h-16 w-full items-center justify-between gap-4 pl-2 pr-3 sm:pl-3 sm:pr-4 md:pl-4 md:pr-5 lg:pl-5 lg:pr-6">
         {/* Left — brand */}
         <Link
           href="/"
-          className="shrink-0 text-xl font-bold tracking-tight text-[#7e22ce]"
+          className="shrink-0"
           aria-label="Proctora home"
         >
-          Proctora
+          <LogoAnimation compact showTagline={false} className="w-20 sm:w-36" />
         </Link>
 
         {/* Center — search (hidden on mobile) */}

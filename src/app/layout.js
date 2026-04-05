@@ -17,8 +17,9 @@ export const metadata = {
   title: "Proctora",
   description: "Your all-in-one platform",
   icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
+    icon: "/favicon.svg?v=3",
+    shortcut: "/favicon.svg?v=3",
+    apple: "/favicon.svg?v=3",
   },
 };
 
