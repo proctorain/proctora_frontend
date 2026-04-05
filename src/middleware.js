@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 // Routes that require a logged-in session
 const protectedRoutes = [
   "/dashboard",
+  "/profile",
   "/on-boarding",
   "/onboarding",
   "/forms",
@@ -15,7 +16,6 @@ const authOnlyRoutes = [
   "/register",
   "/verify-otp",
   "/forgot-password",
-  "/reset-password",
 ];
 
 export function middleware(request) {
@@ -36,9 +36,9 @@ export function middleware(request) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // Already logged in trying to reach login/register/etc → send to home
+  // Already logged in trying to reach login/register/etc → send to dashboard
   if (isAuthOnly && token) {
-    return NextResponse.redirect(new URL("/", request.url));
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   return NextResponse.next();

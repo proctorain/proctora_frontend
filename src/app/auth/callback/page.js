@@ -54,11 +54,11 @@ export default function AuthCallbackPage() {
       const shouldOnboard =
         requiresOnboarding === "true" ||
         (requiresOnboarding == null && isNewUser === "true");
-      const destination = shouldOnboard ? "/on-boarding" : "/";
+      const destination = shouldOnboard ? "/on-boarding" : "/dashboard";
       setStatusMessage(
         shouldOnboard
           ? "Account created. Taking you to on-boarding..."
-          : "Sign in successful. Redirecting to home...",
+          : "Sign in successful. Redirecting to dashboard...",
       );
       router.replace(destination);
     };

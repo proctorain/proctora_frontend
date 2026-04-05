@@ -16,6 +16,11 @@ const geistMono = Geist_Mono({
 export const metadata = {
   title: "Proctora",
   description: "Your all-in-one platform",
+  icons: {
+    icon: "/favicon.svg?v=3",
+    shortcut: "/favicon.svg?v=3",
+    apple: "/favicon.svg?v=3",
+  },
 };
 
 export default function RootLayout({ children }) {

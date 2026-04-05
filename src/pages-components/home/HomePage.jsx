@@ -36,7 +36,7 @@ export default function HomePage() {
         <Navbar />
 
         {/* Placeholder hero — replace with real content as needed */}
-        <main className="flex flex-col items-center justify-center px-4 pt-32 pb-20 text-center">
+        <main className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center px-6 py-20 text-center sm:px-10">
           <h1
             className="text-4xl font-bold tracking-tight text-zinc-900 sm:text-5xl lg:text-6xl"
             style={{ letterSpacing: "-0.02em" }}

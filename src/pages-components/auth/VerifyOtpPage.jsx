@@ -94,7 +94,7 @@ export default function VerifyOtpPage() {
         typeof requiresOnboarding === "boolean"
           ? requiresOnboarding
           : Boolean(isNewUser);
-      router.push(shouldOnboard ? "/on-boarding" : "/");
+      router.push(shouldOnboard ? "/on-boarding" : "/dashboard");
     } catch (err) {
       setServerError(extractError(err));
     } finally {

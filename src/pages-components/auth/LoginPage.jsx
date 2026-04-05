@@ -10,6 +10,7 @@ import { Eye, EyeOff } from "lucide-react";
 
 import { getGoogleAuthUrl, loginUser } from "@/api/auth.api";
 import { useAuth } from "@/context/AuthContext";
+import LogoAnimation from "@/components/custom/LogoAnimation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -46,7 +47,7 @@ export default function LoginPage() {
       const res = await loginUser(values);
       const { accessToken, refreshToken, requiresOnboarding } = res.data;
       await login(accessToken, refreshToken);
-      router.push(requiresOnboarding ? "/on-boarding" : "/");
+      router.push(requiresOnboarding ? "/on-boarding" : "/dashboard");
     } catch (err) {
       const data = err?.response?.data;
 
@@ -89,10 +90,10 @@ export default function LoginPage() {
       >
         {/* Header */}
         <div className="mb-8 text-center">
-          <Link href="/" className="text-2xl font-bold tracking-tight text-[#7e22ce]">
-            Proctora
+          <Link href="/" className="mx-auto block w-44" aria-label="Proctora home">
+            <LogoAnimation showTagline={false} className="w-full" />
           </Link>
-          <p className="mt-1 text-sm text-zinc-500">Welcome back</p>
+          <p className="mt-2 text-sm text-zinc-500">Welcome back</p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">

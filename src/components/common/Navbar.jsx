@@ -3,9 +3,10 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Search, Menu, X, LogOut, Home, LogIn, UserPlus, KeyRound, Lock, LayoutDashboard, FileText, Settings } from "lucide-react";
+import { Search, Menu, X, LogOut, Home, LogIn, UserPlus, KeyRound, Lock, LayoutDashboard, FileText, Settings, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import LogoAnimation from "@/components/custom/LogoAnimation";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 
@@ -17,12 +18,13 @@ const ALL_PAGES = [
   { category: "Account",   label: "Forgot password", description: "Send a password reset link to your email",                     href: "/forgot-password", Icon: KeyRound,        tags: ["forgot", "forgot password", "reset", "recover", "lost password"] },
   { category: "Account",   label: "Reset password",  description: "Set a new password using your reset link",                     href: "/reset-password",  Icon: Lock,            tags: ["reset", "reset password", "new password", "change password"] },
   { category: "Dashboard", label: "Dashboard",       description: "Your personal overview and exam stats (sign in required)",     href: "/dashboard",       Icon: LayoutDashboard, tags: ["dashboard", "overview", "stats", "summary"] },
+  { category: "Dashboard", label: "Profile",         description: "Update your display name and avatar",                         href: "/profile",         Icon: UserRound,       tags: ["profile", "avatar", "name", "account", "user"] },
   { category: "Dashboard", label: "My Forms",        description: "Create, manage and share exam forms (sign in required)",       href: "/forms",           Icon: FileText,        tags: ["forms", "exams", "tests", "quiz", "create exam"] },
   { category: "Dashboard", label: "Settings",        description: "Account preferences and security settings (sign in required)", href: "/settings",        Icon: Settings,        tags: ["settings", "preferences", "profile", "security"] },
 ];
 
 // ─── SearchBox component ─────────────────────────────────────────────────────
-function SearchBox({ onNavigate }) {
+function SearchBox({ onNavigate, pages = ALL_PAGES }) {
   const [query, setQuery]           = useState("");
   const [open, setOpen]             = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -32,13 +34,13 @@ function SearchBox({ onNavigate }) {
 
   const q = query.trim().toLowerCase();
   const filtered = q
-    ? ALL_PAGES.filter(
+    ? pages.filter(
         (p) =>
           p.label.toLowerCase().includes(q) ||
           p.description.toLowerCase().includes(q) ||
           p.tags.some((t) => t.includes(q)),
       )
-    : ALL_PAGES;
+    : pages;
 
   // Group by category while preserving order
   const groups = filtered.reduce((acc, item) => {
@@ -170,7 +172,42 @@ function SearchBox({ onNavigate }) {
 }
 
 // ─── ProfileMenu component ───────────────────────────────────────────────────
-function ProfileMenu({ avatarLetter, email, onLogout }) {
+function ProfileAvatar({ avatarUrl, avatarLetter, className, label }) {
+  if (avatarUrl) {
+    return (
+      <div
+        role="img"
+        aria-label={label}
+        className={cn(
+          "shrink-0 rounded-full border border-[rgba(168,85,247,0.2)] bg-white bg-cover bg-center",
+          className,
+        )}
+        style={{ backgroundImage: `url(${avatarUrl})` }}
+      />
+    );
+  }
+
+  return (
+    <div
+      className={cn(
+        "flex shrink-0 items-center justify-center rounded-full bg-[#9333ea] text-white text-sm font-semibold select-none",
+        className,
+      )}
+    >
+      {avatarLetter || "?"}
+    </div>
+  );
+}
+
+function ProfileMenu({
+  avatarLetter,
+  avatarUrl,
+  email,
+  showResetPassword,
+  onOpenProfile,
+  onResetPassword,
+  onLogout,
+}) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
@@ -187,23 +224,57 @@ function ProfileMenu({ avatarLetter, email, onLogout }) {
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen((p) => !p)}
-        className="flex h-8 w-8 items-center justify-center rounded-full bg-[#9333ea] text-white text-sm font-semibold select-none hover:bg-[#7e22ce] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(168,85,247,0.5)]"
+        className={cn(
+          "flex h-8 w-8 items-center justify-center rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(168,85,247,0.5)]",
+          avatarUrl ? "bg-white hover:bg-zinc-50" : "bg-[#9333ea] text-white hover:bg-[#7e22ce]",
+        )}
         aria-label={`Account menu for ${email}`}
         aria-haspopup="true"
         aria-expanded={open}
       >
-        {avatarLetter}
+        <ProfileAvatar
+          avatarUrl={avatarUrl}
+          avatarLetter={avatarLetter}
+          className="h-8 w-8"
+          label={`${email} avatar`}
+        />
       </button>
 
       {open && (
         <div className="absolute right-0 top-full mt-2 w-56 rounded-xl border border-[rgba(168,85,247,0.15)] bg-white shadow-[0_8px_32px_rgba(147,51,234,0.14)] overflow-hidden z-50">
           {/* Email header */}
           <div className="flex items-center gap-3 px-4 py-3 border-b border-[rgba(168,85,247,0.1)]">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#9333ea] text-white text-sm font-semibold select-none">
-              {avatarLetter}
-            </div>
+            <ProfileAvatar
+              avatarUrl={avatarUrl}
+              avatarLetter={avatarLetter}
+              className="h-8 w-8"
+              label={`${email} avatar`}
+            />
             <p className="text-sm text-zinc-600 truncate">{email}</p>
           </div>
+          {/* Profile */}
+          <button
+            onClick={() => {
+              setOpen(false);
+              onOpenProfile();
+            }}
+            className="flex w-full items-center gap-2.5 px-4 py-2.5 text-sm font-medium text-[#7e22ce] hover:bg-[rgba(168,85,247,0.06)] transition-colors"
+          >
+            <UserRound size={15} />
+            Profile
+          </button>
+          {showResetPassword && (
+            <button
+              onClick={() => {
+                setOpen(false);
+                onResetPassword();
+              }}
+              className="flex w-full items-center gap-2.5 px-4 py-2.5 text-sm font-medium text-[#7e22ce] hover:bg-[rgba(168,85,247,0.06)] transition-colors"
+            >
+              <Lock size={15} />
+              Reset password
+            </button>
+          )}
           {/* Sign out */}
           <button
             onClick={() => { setOpen(false); onLogout(); }}
@@ -219,7 +290,7 @@ function ProfileMenu({ avatarLetter, email, onLogout }) {
 }
 
 /**
- * Navbar — Proctora branding left, search center, auth actions right.
+ * Navbar — animated Proctora branding left, search center, auth actions right.
  * Shows Log in / Sign up when logged out; avatar with dropdown when logged in.
  * Collapses to a hamburger menu on md and below.
  */
@@ -234,11 +305,50 @@ export default function Navbar({ className }) {
     router.push("/");
   };
 
+  const handleOpenProfile = () => {
+    setMenuOpen(false);
+    router.push("/profile");
+  };
+
+  const handleResetPassword = () => {
+    setMenuOpen(false);
+    const emailQuery =
+      user && typeof user === "object" && user.email
+        ? `?email=${encodeURIComponent(user.email)}`
+        : "";
+    if (emailQuery) {
+      router.push(`/reset-password${emailQuery}&flow=logged-in`);
+      return;
+    }
+
+    router.push("/reset-password?flow=logged-in");
+  };
+
   // First letter of the email for the avatar
   const avatarLetter =
     user && typeof user === "object" && user.email
       ? user.email[0].toUpperCase()
       : null;
+
+  const avatarUrl =
+    user && typeof user === "object"
+      ? user?.profile?.avatarUrl || null
+      : null;
+
+  const isEmailAuthUser =
+    user && typeof user === "object" && user.authMethod === "email";
+
+  const isGoogleAuthUser =
+    user && typeof user === "object" && user.authMethod === "google";
+
+  const searchPages =
+    user && typeof user === "object"
+      ? ALL_PAGES.filter(
+          (p) =>
+            p.href !== "/forgot-password" &&
+            !(isGoogleAuthUser && p.href === "/reset-password"),
+        )
+      : ALL_PAGES;
 
   return (
     <nav
@@ -256,19 +366,22 @@ export default function Navbar({ className }) {
       aria-label="Main navigation"
     >
       {/* Desktop row */}
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+      <div className="flex h-16 w-full items-center justify-between gap-4 pl-2 pr-3 sm:pl-3 sm:pr-4 md:pl-4 md:pr-5 lg:pl-5 lg:pr-6">
         {/* Left — brand */}
         <Link
           href="/"
-          className="shrink-0 text-xl font-bold tracking-tight text-[#7e22ce]"
+          className="shrink-0"
           aria-label="Proctora home"
         >
-          Proctora
+          <LogoAnimation compact showTagline={false} className="w-20 sm:w-36" />
         </Link>
 
         {/* Center — search (hidden on mobile) */}
         <div className="hidden flex-1 max-w-md md:flex">
-          <SearchBox onNavigate={() => setMenuOpen(false)} />
+          <SearchBox
+            pages={searchPages}
+            onNavigate={() => setMenuOpen(false)}
+          />
         </div>
 
         {/* Right — auth area (hidden on mobile), skeleton while loading */}
@@ -278,7 +391,11 @@ export default function Navbar({ className }) {
           ) : user ? (
             <ProfileMenu
               avatarLetter={avatarLetter}
+              avatarUrl={avatarUrl}
               email={user.email}
+              showResetPassword={isEmailAuthUser}
+              onOpenProfile={handleOpenProfile}
+              onResetPassword={handleResetPassword}
               onLogout={handleLogout}
             />
           ) : (
@@ -319,7 +436,10 @@ export default function Navbar({ className }) {
         >
           {/* Mobile search */}
           <div className="mb-3">
-            <SearchBox onNavigate={() => setMenuOpen(false)} />
+            <SearchBox
+              pages={searchPages}
+              onNavigate={() => setMenuOpen(false)}
+            />
           </div>
 
           {/* Mobile auth */}
@@ -330,13 +450,36 @@ export default function Navbar({ className }) {
               <>
                 {/* Email + avatar row */}
                 <div className="flex items-center gap-3 px-1 py-2 border-b border-[rgba(168,85,247,0.1)] mb-1">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#9333ea] text-white text-sm font-semibold select-none">
-                    {avatarLetter}
-                  </div>
+                  <ProfileAvatar
+                    avatarUrl={avatarUrl}
+                    avatarLetter={avatarLetter}
+                    className="h-9 w-9"
+                    label={`${user.email || "User"} avatar`}
+                  />
                   {user.email && (
                     <span className="text-sm text-zinc-500 truncate">{user.email}</span>
                   )}
                 </div>
+                <Button
+                  variant="ghost"
+                  onClick={handleOpenProfile}
+                  className="w-full justify-center font-medium text-[#7e22ce] hover:bg-[rgba(168,85,247,0.08)] hover:text-[#7e22ce] min-h-11 gap-1.5"
+                  aria-label="Open profile"
+                >
+                  <UserRound size={15} />
+                  Profile
+                </Button>
+                {isEmailAuthUser && (
+                  <Button
+                    variant="ghost"
+                    onClick={handleResetPassword}
+                    className="w-full justify-center font-medium text-[#7e22ce] hover:bg-[rgba(168,85,247,0.08)] hover:text-[#7e22ce] min-h-11 gap-1.5"
+                    aria-label="Reset password"
+                  >
+                    <Lock size={15} />
+                    Reset password
+                  </Button>
+                )}
                 <Button
                   variant="ghost"
                   onClick={handleLogout}

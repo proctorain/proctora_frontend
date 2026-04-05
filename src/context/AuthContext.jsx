@@ -64,8 +64,20 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
+  const refreshUser = useCallback(async () => {
+    const accessToken = localStorage.getItem("accessToken");
+    if (!accessToken) {
+      setUser(false);
+      return null;
+    }
+
+    const res = await getMe();
+    setUser(res.data.user);
+    return res.data.user;
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );
