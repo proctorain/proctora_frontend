@@ -1,14 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 
-import { loginUser } from "@/api/auth.api";
+import { getGoogleAuthUrl, loginUser } from "@/api/auth.api";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,10 +21,13 @@ const loginSchema = z.object({
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const errorFromQuery = searchParams.get("error");
   const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [serverError, setServerError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const googleAuthUrl = getGoogleAuthUrl();
 
   const {
     register,
@@ -32,16 +35,31 @@ export default function LoginPage() {
     formState: { errors },
   } = useForm({ resolver: zodResolver(loginSchema) });
 
+  useEffect(() => {
+    if (errorFromQuery) setServerError(errorFromQuery);
+  }, [errorFromQuery]);
+
   const onSubmit = async (values) => {
     setServerError("");
     setIsLoading(true);
     try {
       const res = await loginUser(values);
-      const { accessToken, refreshToken } = res.data;
+      const { accessToken, refreshToken, requiresOnboarding } = res.data;
       await login(accessToken, refreshToken);
-      router.push("/");
+      router.push(requiresOnboarding ? "/on-boarding" : "/");
     } catch (err) {
       const data = err?.response?.data;
+
+      if (data?.requiresVerification && values?.email) {
+        const query = new URLSearchParams({
+          email: values.email,
+          sent: "1",
+          from: "login",
+        }).toString();
+        router.push(`/verify-otp?${query}`);
+        return;
+      }
+
       setServerError(
         Array.isArray(data?.errors) && data.errors.length > 0
           ? data.errors.map((e) => e.message).join(" · ")
@@ -50,6 +68,16 @@ export default function LoginPage() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleGoogleSignIn = () => {
+    if (!googleAuthUrl) {
+      setServerError(
+        "Google sign-in is unavailable. Configure NEXT_PUBLIC_API_URL.",
+      );
+      return;
+    }
+    window.location.href = googleAuthUrl;
   };
 
   return (
@@ -145,6 +173,35 @@ export default function LoginPage() {
             className="w-full bg-[#9333ea] text-white hover:bg-[#7e22ce] font-medium shadow-[0_2px_12px_rgba(147,51,234,0.25)] min-h-11 disabled:opacity-60"
           >
             {isLoading ? "Signing in…" : "Sign in"}
+          </Button>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-[rgba(168,85,247,0.18)]" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-white px-3 text-zinc-400 tracking-wide">or</span>
+            </div>
+          </div>
+
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleGoogleSignIn}
+            className="w-full min-h-11 border-[rgba(168,85,247,0.28)] text-zinc-700 hover:bg-[rgba(168,85,247,0.06)]"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 48 48"
+              className="h-4 w-4"
+              aria-hidden="true"
+            >
+              <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.6 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.7 1.1 7.8 3l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z" />
+              <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15 18.9 12 24 12c3 0 5.7 1.1 7.8 3l5.7-5.7C34 6.1 29.3 4 24 4c-7.7 0-14.4 4.3-17.7 10.7z" />
+              <path fill="#4CAF50" d="M24 44c5.2 0 10-2 13.6-5.3l-6.3-5.2C29.3 35 26.8 36 24 36c-5.3 0-9.6-3.3-11.3-8l-6.5 5C9.4 39.6 16.1 44 24 44z" />
+              <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.4-2.4 4.5-4.7 5.8l.1.1 6.3 5.2C36.5 39.5 44 34 44 24c0-1.3-.1-2.4-.4-3.5z" />
+            </svg>
+            Continue with Google
           </Button>
         </form>
 

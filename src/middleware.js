@@ -1,10 +1,22 @@
 import { NextResponse } from "next/server";
 
 // Routes that require a logged-in session
-const protectedRoutes = ["/dashboard", "/forms", "/settings"];
+const protectedRoutes = [
+  "/dashboard",
+  "/on-boarding",
+  "/onboarding",
+  "/forms",
+  "/settings",
+];
 
 // Routes only accessible when NOT logged in — redirect logged-in users away
-const authOnlyRoutes = ["/login", "/register", "/forgot-password", "/reset-password"];
+const authOnlyRoutes = [
+  "/login",
+  "/register",
+  "/verify-otp",
+  "/forgot-password",
+  "/reset-password",
+];
 
 export function middleware(request) {
   const { pathname } = request.nextUrl;
