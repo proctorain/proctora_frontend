@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 // Routes that require a logged-in session
 const protectedRoutes = [
   "/dashboard",
+  "/profile",
   "/on-boarding",
   "/onboarding",
   "/forms",

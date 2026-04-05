@@ -8,6 +8,19 @@ const axiosInstance = axios.create({
 
 // Attach access token to every request
 axiosInstance.interceptors.request.use((config) => {
+  // Let browser set multipart boundaries automatically for FormData requests.
+  if (
+    typeof FormData !== "undefined" &&
+    config.data instanceof FormData &&
+    config.headers
+  ) {
+    if (typeof config.headers.set === "function") {
+      config.headers.set("Content-Type", undefined);
+    } else {
+      delete config.headers["Content-Type"];
+    }
+  }
+
   const token =
     typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
   if (token) {
