@@ -40,6 +40,8 @@ export default function VerifyOtpPage() {
   const searchParams = useSearchParams();
   const queryEmail = searchParams.get("email") ?? "";
   const sentFlag = searchParams.get("sent") === "1";
+  const fromFlow = searchParams.get("from");
+  const isRegisterFlow = fromFlow === "register";
 
   const { login } = useAuth();
   const [serverError, setServerError] = useState("");
@@ -81,9 +83,18 @@ export default function VerifyOtpPage() {
 
     try {
       const res = await verifyEmailOtp(values);
-      const { accessToken, refreshToken, isNewUser } = res.data;
+      const {
+        accessToken,
+        refreshToken,
+        requiresOnboarding,
+        isNewUser,
+      } = res.data;
       await login(accessToken, refreshToken);
-      router.push(isNewUser ? "/on-boarding" : "/");
+      const shouldOnboard =
+        typeof requiresOnboarding === "boolean"
+          ? requiresOnboarding
+          : Boolean(isNewUser);
+      router.push(shouldOnboard ? "/on-boarding" : "/");
     } catch (err) {
       setServerError(extractError(err));
     } finally {
@@ -131,25 +142,35 @@ export default function VerifyOtpPage() {
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
-          <div className="space-y-1.5">
-            <Label htmlFor="email" className="text-zinc-700 font-medium text-sm">
-              Email
-            </Label>
-            <Input
-              id="email"
-              type="email"
-              autoComplete="email"
-              placeholder="you@example.com"
-              aria-describedby={errors.email ? "email-error" : undefined}
-              className="border-[rgba(168,85,247,0.25)] focus-visible:ring-[rgba(168,85,247,0.4)]"
-              {...register("email")}
-            />
-            {errors.email && (
-              <p id="email-error" className="text-xs text-red-500" role="alert">
-                {errors.email.message}
-              </p>
-            )}
-          </div>
+          {isRegisterFlow && queryEmail ? (
+            <div className="space-y-1.5">
+              <Label className="text-zinc-700 font-medium text-sm">Email</Label>
+              <div className="rounded-md border border-[rgba(168,85,247,0.2)] bg-[rgba(168,85,247,0.04)] px-3 py-2.5 text-sm text-zinc-700">
+                {queryEmail}
+              </div>
+              <input type="hidden" {...register("email")} />
+            </div>
+          ) : (
+            <div className="space-y-1.5">
+              <Label htmlFor="email" className="text-zinc-700 font-medium text-sm">
+                Email
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                autoComplete="email"
+                placeholder="you@example.com"
+                aria-describedby={errors.email ? "email-error" : undefined}
+                className="border-[rgba(168,85,247,0.25)] focus-visible:ring-[rgba(168,85,247,0.4)]"
+                {...register("email")}
+              />
+              {errors.email && (
+                <p id="email-error" className="text-xs text-red-500" role="alert">
+                  {errors.email.message}
+                </p>
+              )}
+            </div>
+          )}
 
           <div className="space-y-1.5">
             <Label htmlFor="otp" className="text-zinc-700 font-medium text-sm">

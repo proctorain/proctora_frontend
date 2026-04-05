@@ -18,8 +18,8 @@ export default function OnboardingPage() {
             Let&apos;s set up your <span className="text-[#9333ea]">Proctora</span> account
           </h1>
           <p className="mt-5 max-w-2xl text-zinc-500">
-            You are signed in as a new user. This placeholder route is where onboarding steps,
-            profile setup, and role configuration can be added next.
+            Complete your profile details here before continuing. This placeholder route is where
+            onboarding steps, profile setup, and role configuration can be added next.
           </p>
         </main>
       </div>

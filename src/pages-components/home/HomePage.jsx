@@ -1,13 +1,31 @@
 "use client";
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Navbar from "@/components/common/Navbar";
 import AnimatedBackground from "@/components/custom/AnimatedBackground";
+import { useAuth } from "@/context/AuthContext";
 
 /**
  * HomePage — landing page component.
  * All page logic lives here; app/page.js only imports and renders this.
  */
 export default function HomePage() {
+  const router = useRouter();
+  const { user, loading } = useAuth();
+
+  useEffect(() => {
+    if (loading || !user || typeof user !== "object") return;
+
+    const name = user?.profile?.name;
+    const isProfileComplete =
+      typeof name === "string" && name.trim().length > 0;
+
+    if (!isProfileComplete) {
+      router.replace("/on-boarding");
+    }
+  }, [loading, router, user]);
+
   return (
     <div className="relative min-h-screen bg-white font-sans">
       {/* Floating purple bubbles behind everything */}

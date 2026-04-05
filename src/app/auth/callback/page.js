@@ -31,6 +31,7 @@ export default function AuthCallbackPage() {
       const accessToken = params.get("accessToken");
       const refreshToken = params.get("refreshToken");
       const isNewUser = params.get("isNewUser");
+      const requiresOnboarding = params.get("requiresOnboarding");
 
       if (!accessToken || !refreshToken) {
         router.replace(toLoginWithError(DEFAULT_ERROR_MESSAGE));
@@ -50,9 +51,12 @@ export default function AuthCallbackPage() {
 
       if (!isActive) return;
 
-      const destination = isNewUser === "true" ? "/on-boarding" : "/";
+      const shouldOnboard =
+        requiresOnboarding === "true" ||
+        (requiresOnboarding == null && isNewUser === "true");
+      const destination = shouldOnboard ? "/on-boarding" : "/";
       setStatusMessage(
-        isNewUser === "true"
+        shouldOnboard
           ? "Account created. Taking you to on-boarding..."
           : "Sign in successful. Redirecting to home...",
       );

@@ -71,6 +71,7 @@ export default function RegisterPage() {
       const query = new URLSearchParams({
         email: values.email,
         sent: "1",
+        from: "register",
       }).toString();
       router.push(`/verify-otp?${query}`);
     } catch (err) {
