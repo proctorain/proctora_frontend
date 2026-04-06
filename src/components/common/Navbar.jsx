@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Search, Menu, X, LogOut, Home, LogIn, UserPlus, KeyRound, Lock, LayoutDashboard, FileText, Settings, UserRound } from "lucide-react";
+import { Search, Menu, X, LogOut, Home, LogIn, UserPlus, KeyRound, Lock, LayoutDashboard, FileText, Settings, UserRound, Code2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import LogoAnimation from "@/components/custom/LogoAnimation";
@@ -18,6 +18,7 @@ const ALL_PAGES = [
   { category: "Account",   label: "Forgot password", description: "Send a password reset link to your email",                     href: "/forgot-password", Icon: KeyRound,        tags: ["forgot", "forgot password", "reset", "recover", "lost password"] },
   { category: "Account",   label: "Reset password",  description: "Set a new password using your reset link",                     href: "/reset-password",  Icon: Lock,            tags: ["reset", "reset password", "new password", "change password"] },
   { category: "Dashboard", label: "Dashboard",       description: "Your personal overview and exam stats (sign in required)",     href: "/dashboard",       Icon: LayoutDashboard, tags: ["dashboard", "overview", "stats", "summary"] },
+  { category: "Dashboard", label: "Compiler",        description: "Code playground with execution terminal (sign in required)",   href: "/dashboard/compiler", Icon: Code2,        tags: ["compiler", "playground", "code", "execute", "java", "python"] },
   { category: "Dashboard", label: "Profile",         description: "Update your display name and avatar",                         href: "/profile",         Icon: UserRound,       tags: ["profile", "avatar", "name", "account", "user"] },
   { category: "Dashboard", label: "My Forms",        description: "Create, manage and share exam forms (sign in required)",       href: "/forms",           Icon: FileText,        tags: ["forms", "exams", "tests", "quiz", "create exam"] },
   { category: "Dashboard", label: "Settings",        description: "Account preferences and security settings (sign in required)", href: "/settings",        Icon: Settings,        tags: ["settings", "preferences", "profile", "security"] },

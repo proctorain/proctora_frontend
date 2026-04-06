@@ -1,0 +1,146 @@
+.playground-shell {
+  --mk-bg: #221826;
+  --mk-panel: #2d1f35;
+  --mk-border: #6b3c78;
+  --mk-text: #f8f8f2;
+  --mk-muted: #d8b7ef;
+  --mk-keyword: #ff5f87;
+  --mk-string: #ffd866;
+  --mk-function: #78dce8;
+  --mk-number: #ab9df2;
+  --mk-comment: #727072;
+  --mk-variable: #a9dc76;
+  --mk-operator: #ff6188;
+}
+
+.playground-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.playground-control {
+  border: 0;
+  background: transparent;
+  color: #3f2552;
+  padding: 0;
+  outline: none;
+}
+
+.playground-control:hover {
+  color: #281236;
+}
+
+.playground-control:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.playground-editor-wrap {
+  border: 1px solid var(--mk-border);
+  border-radius: 0.95rem;
+  overflow: hidden;
+  background: #171018;
+  min-height: 460px;
+}
+
+.playground-editor {
+  font-family: "Fira Code", "JetBrains Mono", "Consolas", monospace;
+  font-size: 14px;
+  min-height: 460px;
+  color: var(--mk-text);
+}
+
+.playground-editor pre,
+.playground-editor textarea {
+  white-space: pre !important;
+  outline: none;
+  min-height: 460px;
+}
+
+.playground-editor textarea {
+  caret-color: #fdfdfd;
+}
+
+.playground-editor .token.comment,
+.playground-editor .token.prolog,
+.playground-editor .token.doctype,
+.playground-editor .token.cdata {
+  color: var(--mk-comment);
+}
+
+.playground-editor .token.punctuation {
+  color: #f8f8f2;
+}
+
+.playground-editor .token.operator {
+  color: var(--mk-operator);
+}
+
+.playground-editor .token.keyword,
+.playground-editor .token.atrule,
+.playground-editor .token.selector {
+  color: var(--mk-keyword);
+}
+
+.playground-editor .token.function,
+.playground-editor .token.class-name {
+  color: var(--mk-function);
+}
+
+.playground-editor .token.string,
+.playground-editor .token.char,
+.playground-editor .token.inserted {
+  color: var(--mk-string);
+}
+
+.playground-editor .token.number,
+.playground-editor .token.boolean,
+.playground-editor .token.constant {
+  color: var(--mk-number);
+}
+
+.playground-editor .token.variable,
+.playground-editor .token.parameter {
+  color: var(--mk-variable);
+}
+
+.playground-editor .token.deleted {
+  color: #ff6f91;
+}
+
+.playground-editor .token.important,
+.playground-editor .token.bold {
+  font-weight: 700;
+}
+
+.playground-stdin {
+  resize: vertical;
+  min-height: 190px;
+  max-height: 420px;
+  font-family: "Fira Code", "JetBrains Mono", "Consolas", monospace;
+}
+
+.terminal-panel {
+  background: #242424;
+}
+
+.terminal-header {
+  background: #2d2d2d;
+}
+
+.terminal-body {
+  background: #1f1f1f;
+  color: #ececec;
+}
+
+@media (max-width: 1024px) {
+  .playground-editor-wrap,
+  .playground-editor,
+  .playground-editor pre,
+  .playground-editor textarea {
+    min-height: 360px;
+  }
+}
