@@ -1,6 +1,5 @@
 import Navbar from "@/components/common/Navbar";
 import LeftSidebar from "@/components/common/LeftSidebar";
-import AnimatedBackground from "@/components/custom/AnimatedBackground";
 
 export const metadata = {
   title: "Dashboard | Proctora",
@@ -9,8 +8,7 @@ export const metadata = {
 
 export default function DashboardPage() {
   return (
-    <div className="relative min-h-screen bg-white font-sans">
-      <AnimatedBackground />
+    <div className="relative min-h-screen font-sans">
       <div className="relative z-10">
         <Navbar />
         <div className="flex min-h-[calc(100vh-4rem)]">

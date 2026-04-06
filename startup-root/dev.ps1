@@ -17,5 +17,6 @@ wt --title "API Gateway"  --startingDirectory "$root\backend\api-gateway"  power
    new-tab --title "Auth Service"   --startingDirectory "$root\backend\auth-services"  powershell -NoExit -Command "npm run dev" `; `
    new-tab --title "Quiz Service"   --startingDirectory "$root\backend\quiz-services"  powershell -NoExit -Command "npm run dev" `; `
    new-tab --title "Email Service"  --startingDirectory "$root\backend\email-services" powershell -NoExit -Command "npm run dev" `; `
+   new-tab --title "Compiler Service"  --startingDirectory "$root\backend\compiler-services" powershell -NoExit -Command "npm run dev" `; `
     new-tab --title "Profile Service" --startingDirectory "$root\backend\profile-services" powershell -NoExit -Command "npm run dev" `; `
    new-tab --title "Frontend"       --startingDirectory "$root\frontend"               powershell -NoExit -Command "npm run dev"

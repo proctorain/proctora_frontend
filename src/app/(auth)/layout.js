@@ -6,7 +6,7 @@ import AuthRightPanel from "@/components/custom/AuthRightPanel";
 // Left: clean white with the form. Right: deep-purple decorative panel (hidden on mobile).
 export default function AuthLayout({ children }) {
   return (
-    <div className="min-h-screen bg-white font-sans flex flex-col md:flex-row">
+    <div className="min-h-screen font-sans flex flex-col md:flex-row">
       {/* LEFT — form panel */}
       <div className="relative flex flex-1 flex-col items-center justify-center px-6 py-16 md:py-12">
         {/* Back to home — always visible above the form */}
