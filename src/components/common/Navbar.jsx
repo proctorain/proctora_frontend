@@ -355,7 +355,6 @@ export default function Navbar({ className }) {
     <nav
       className={cn(
         "sticky top-0 z-50 w-full",
-        "border-b border-[rgba(168,85,247,0.18)]",
         "shadow-[0_1px_24px_rgba(168,85,247,0.07)]",
         className,
       )}
@@ -515,6 +514,15 @@ export default function Navbar({ className }) {
           </div>
         </div>
       )}
+
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-linear-to-r from-transparent via-[#4c1d95] to-transparent"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 -bottom-1 h-3 bg-linear-to-r from-transparent via-[rgba(76,29,149,0.35)] to-transparent blur-sm"
+      />
     </nav>
   );
 }
