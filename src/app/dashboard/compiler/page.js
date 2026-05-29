@@ -10,6 +10,7 @@ import { Loader2, Play, RotateCcw, TerminalSquare } from "lucide-react";
 
 import Navbar from "@/components/common/Navbar";
 import LeftSidebar from "@/components/common/LeftSidebar";
+import AnimatedBackground from "@/components/custom/AnimatedBackground";
 import { getCompilerLanguages, executeCompilerCode } from "@/api/compiler.api";
 
 import "./playground.css";
@@ -166,8 +167,9 @@ export default function CompilerPlaygroundPage() {
   }, [code, language]);
 
   return (
-    <div className="relative min-h-screen font-sans">
-      <div className="relative z-10">
+    <>
+      <AnimatedBackground />
+      <div className="relative z-10 min-h-screen font-sans">
         <Navbar />
         <div className="flex min-h-[calc(100vh-4rem)]">
           <LeftSidebar />
@@ -298,6 +300,6 @@ export default function CompilerPlaygroundPage() {
           </main>
         </div>
       </div>
-    </div>
+    </>
   );
 }

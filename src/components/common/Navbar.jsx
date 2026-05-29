@@ -180,7 +180,7 @@ function ProfileAvatar({ avatarUrl, avatarLetter, className, label }) {
         role="img"
         aria-label={label}
         className={cn(
-          "shrink-0 rounded-full border border-[rgba(168,85,247,0.2)] bg-white bg-cover bg-center",
+          "shrink-0 rounded-full border-2 border-zinc-900 bg-white bg-cover bg-center",
           className,
         )}
         style={{ backgroundImage: `url(${avatarUrl})` }}
@@ -191,7 +191,7 @@ function ProfileAvatar({ avatarUrl, avatarLetter, className, label }) {
   return (
     <div
       className={cn(
-        "flex shrink-0 items-center justify-center rounded-full bg-[#9333ea] text-white text-sm font-semibold select-none",
+        "flex shrink-0 items-center justify-center rounded-full bg-[#9333ea] text-white text-sm font-semibold select-none border-2 border-zinc-900",
         className,
       )}
     >
